@@ -2,19 +2,19 @@
 # IS 218 - Franklin Tan
 
 
-#Database
+# Database
 ![database](screenshots/database.JPG)
 
-#Homepage
+# Homepage
 ![Homepage](screenshots/homepage.JPG)
 
-#Homepage Data
+# Homepage Data
 ![Homepage Data](screenshots/homepage_data.JPG)
 
-#Adding Record
+# Adding Record
 ![Adding Record](screenshots/adding_record.JPG)
 
-#New Record Added
+# New Record Added
 ![New Record Added](screenshots/new_record_added.JPG)
 
 # Postman
