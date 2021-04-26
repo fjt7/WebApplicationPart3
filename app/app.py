@@ -4,9 +4,14 @@ from flask import Flask, request, Response, redirect
 from flask import render_template
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 app = Flask(__name__)
 mysql = MySQL(cursorclass=DictCursor)
+
+db = SQLAlchemy()
+login_manager = LoginManager()
 
 app.config['MYSQL_DATABASE_HOST'] = 'db'
 app.config['MYSQL_DATABASE_USER'] = 'root'
@@ -14,6 +19,35 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 app.config['MYSQL_DATABASE_DB'] = 'hwData'
 mysql.init_app(app)
+
+def create_app():
+    """Construct the core app object."""
+    app = Flask(__name__, instance_relative_config=False)
+
+    # Application Configuration
+    app.config.from_object('config.Config')
+
+    # Initialize Plugins
+    db.init_app(app)
+    login_manager.init_app(app)
+
+    with app.app_context():
+        import routes
+        import auth
+        from assets import compile_assets
+
+        # Register Blueprints
+        app.register_blueprint(routes.main_bp)
+        app.register_blueprint(auth.auth_bp)
+
+        # Create Database Models
+        db.create_all()
+
+        # Compile static assets
+        if app.config['FLASK_ENV'] == 'development':
+            compile_assets(app)
+
+        return app
 
 @app.route('/', methods=['GET'])
 def index():
