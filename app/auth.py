@@ -36,3 +36,33 @@ def signup():
         template='signup-page',
         body="Sign up for a user account."
     )
+
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    """
+    Log-in page for registered users.
+
+    GET requests serve Log-in page.
+    POST requests validate and redirect user to dashboard.
+    """
+    # Bypass if user is logged in
+    if current_user.is_authenticated:
+        return redirect(url_for('main_bp.dashboard'))
+
+    form = LoginForm()
+    # Validate login attempt
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(password=form.password.data):
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main_bp.dashboard'))
+        flash('Invalid username/password combination')
+        return redirect(url_for('auth_bp.login'))
+    return render_template(
+        'login.jinja2',
+        form=form,
+        title='Log in.',
+        template='login-page',
+        body="Log in with your User account."
+    )
