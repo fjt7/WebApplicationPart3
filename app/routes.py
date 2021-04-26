@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import current_user, login_required
-
+from flask_login import logout_user
 
 # Blueprint Configuration
 main_bp = Blueprint(
@@ -21,3 +21,10 @@ def dashboard():
         current_user=current_user,
         body="You are now logged in!"
     )
+
+@main_bp.route("/logout")
+@login_required
+def logout():
+    """User log-out logic."""
+    logout_user()
+    return redirect(url_for('auth_bp.login'))
